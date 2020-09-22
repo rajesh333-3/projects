@@ -21,3 +21,5 @@ def twoSum(nums, target):
                 break
 ans=twoSum([3,3],6)
 print(ans)
+
+# just adding to learn git commit
