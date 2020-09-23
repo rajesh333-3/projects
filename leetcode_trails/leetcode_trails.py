@@ -22,4 +22,4 @@ def twoSum(nums, target):
 ans=twoSum([3,3],6)
 print(ans)
 
-# just adding to learn git commit
+# just adding to learn git commit+ one  more trail
