@@ -23,11 +23,16 @@ def get_video_links_of_playlist(linkurl):
     data = str(data)
     print('Playlist::>',playlist_id)
     ln()
-    playlist_name = re.findall(r'''"playlist":{"title":".+","contents":''', data)[0][21:-13]
-    playlist_name=re.sub('\\\.+\d+\s','and ',playlist_name)#to remove and(&) symbol and replace it with  'and'
+    try:
+        playlist_name = re.findall(r'''"playlist":{"title":".+","contents":''', data)[0][21:-13]
+        playlist_name=re.sub('\\\.+\d+\s','and ',playlist_name)#to remove and(&) symbol and replace it with  'and'
+    except:
+        playlist_name = 'Rename folder'
     print('Playlist Name::>',playlist_name)
     ln()
-    count=int(re.findall(r'''"totalVideos":\d+''', data)[0][-2:])
+    count_xtract=re.findall(r'''"totalVideos":\d+''', data)[0]
+    start_of_int=count_xtract.find(':')+1#since the total count starts next to ':'
+    count=int(count_xtract[start_of_int:])
     print("No of videos::>",count)      
     ln()
     # text_file = open("sample.txt", "w")
@@ -68,7 +73,8 @@ def generate_playlist(extracted_links):
 def ytplaylist_downloader(Youtube_link):
     urls_extracted,folder,total_count_=get_video_links_of_playlist(Youtube_link)
     #print(k)
-    brk_val = input("how many videos to download out of :::> {} : ".format(total_count_))
+    brk_val = input("How many videos to download out of :::> {} : ".format(total_count_))
+    ln()
     path=basepath+folder+'/'
     make_folder(path)
     ln()
@@ -83,6 +89,14 @@ def ytplaylist_downloader(Youtube_link):
                 break
         except Exception as ex:
             print(ex)
+            try:
+                print('      Trying again...')
+                YouTube(url).streams.first().download(path)
+                print('      Attempt successfull...! for video {}/{}'.format(str(loop_count),str(total_count_)))
+            except:
+                print('      Attempt Unsuccessfull...! for video {}/{}'.format(str(loop_count),str(total_count_)))
+                pass 
+            loop_count+=1                                                             
             pass
     print('Play list Downloaded..!')
 def single_ytvideo_downloader(Youtube_link):
