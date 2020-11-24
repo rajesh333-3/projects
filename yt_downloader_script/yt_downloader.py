@@ -4,7 +4,7 @@ Created on Thu Sep 24 20:46:09 2020
 
 @author: VenkataDurgaRajesh
 """
-
+import string
 import pandas as pd
 import requests
 import re
@@ -25,7 +25,7 @@ def get_video_links_of_playlist(linkurl):
     ln()
     try:
         playlist_name = re.findall(r'''"playlist":{"title":".+","contents":''', data)[0][21:-13]
-        playlist_name=re.sub('\\\.+\d+\s','and ',playlist_name)#to remove and(&) symbol and replace it with  'and'
+        playlist_name = "".join([letter for letter in playlist_name if letter not in string.punctuation])#to remove special chars
     except:
         playlist_name = 'Rename folder'
     print('Playlist Name::>',playlist_name)
@@ -101,9 +101,15 @@ def ytplaylist_downloader(Youtube_link):
     print('Play list Downloaded..!')
 def single_ytvideo_downloader(Youtube_link):
     yt=YouTube(Youtube_link)
-    folder=str(yt.title)[:20]
-    path=basepath+folder+'/'
-    make_folder(path)
+    folder=str(yt.title)
+    folder = "".join([letter for letter in folder if letter not in string.punctuation])
+    try:
+        path=basepath+folder+'/'
+        
+        make_folder(path)
+    except:
+        path=basepath+'please_rename/'
+        make_folder(path)
     ln()    
     yt.streams.first().download(path)
     print(folder+'::> Download Completed..!')
